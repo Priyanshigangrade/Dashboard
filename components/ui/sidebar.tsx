@@ -723,5 +723,4 @@ export {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
-};
-export type { SidebarContextProps }
+}

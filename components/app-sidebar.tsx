@@ -1,6 +1,9 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
+
 import {
   ChevronsUpDown,
   LogOut,
@@ -11,6 +14,7 @@ import {
   FileText,
   FolderKanban,
   Users,
+  ChevronDown,
 } from "lucide-react"
 
 import {
@@ -37,33 +41,18 @@ import {
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-/* ✅ YOUR SIDEBAR MENU ITEMS */
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+
+/* ✅ OTHER MENU ITEMS (API Keys handled separately as dropdown) */
 const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "API Keys",
-    url: "/dashboard/api-keys",
-    icon: KeyRound,
-  },
-  {
-    title: "Templates",
-    url: "/dashboard/templates",
-    icon: FileText,
-  },
-  {
-    title: "Projects",
-    url: "/dashboard/projects",
-    icon: FolderKanban,
-  },
-  {
-    title: "Users",
-    url: "/dashboard/users",
-    icon: Users,
-  },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Templates", url: "/dashboard/templates", icon: FileText },
+  { title: "Projects", url: "/dashboard/projects", icon: FolderKanban },
+  { title: "Users", url: "/dashboard/users", icon: Users },
 ]
 
 /* ✅ TOP BRAND */
@@ -87,6 +76,7 @@ function SidebarTopBrand() {
 /* ✅ BOTTOM USER DROPDOWN */
 function SidebarUserMenu() {
   const { state } = useSidebar()
+  const router = useRouter()
 
   return (
     <DropdownMenu>
@@ -114,7 +104,13 @@ function SidebarUserMenu() {
           Settings
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="text-red-600">
+        <DropdownMenuItem
+          className="text-red-600"
+          onClick={() => {
+            localStorage.removeItem("isLoggedIn")
+            router.push("/login")
+          }}
+        >
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
         </DropdownMenuItem>
@@ -125,6 +121,19 @@ function SidebarUserMenu() {
 
 /* ✅ MAIN SIDEBAR */
 export default function AppSidebar() {
+  const pathname = usePathname()
+
+  // ✅ auto open dropdown when inside api-keys routes
+  const apiOpenDefault = pathname.startsWith("/dashboard/api-keys")
+
+  // ✅ STATE REQUIRED for dropdown open/close
+  const [apiOpen, setApiOpen] = React.useState(apiOpenDefault)
+
+  // ✅ keep dropdown open when route changes to api keys
+  React.useEffect(() => {
+    if (apiOpenDefault) setApiOpen(true)
+  }, [apiOpenDefault])
+
   return (
     <Sidebar collapsible="icon">
       {/* HEADER */}
@@ -142,16 +151,72 @@ export default function AppSidebar() {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                    <a href={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {/* ✅ Dashboard */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Dashboard"
+                  isActive={pathname === "/dashboard"}
+                >
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span>Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* ✅ API Keys Dropdown (Click row opens dropdown) */}
+              <SidebarMenuItem>
+                <Collapsible open={apiOpen} onOpenChange={setApiOpen}>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      tooltip="API Keys"
+                      isActive={apiOpenDefault}
+                      onClick={() => setApiOpen((prev) => !prev)}
+                    >
+                      <KeyRound className="h-4 w-4" />
+                      <span>API Keys</span>
+                      <ChevronDown className="ml-auto h-4 w-4 opacity-70" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+
+                  <CollapsibleContent className="mt-1 space-y-1 pl-7">
+                    <SidebarMenuButton
+                      asChild
+                      size="sm"
+                      isActive={pathname === "/dashboard/api-keys/chatgpt"}
+                    >
+                      <Link href="/dashboard/api-keys/chatgpt">ChatGPT</Link>
+                    </SidebarMenuButton>
+
+                    <SidebarMenuButton
+                      asChild
+                      size="sm"
+                      isActive={pathname === "/dashboard/api-keys/gemini"}
+                    >
+                      <Link href="/dashboard/api-keys/gemini">Gemini</Link>
+                    </SidebarMenuButton>
+                  </CollapsibleContent>
+                </Collapsible>
+              </SidebarMenuItem>
+
+              {/* ✅ Other menu items */}
+              {items
+                .filter((x) => x.title !== "Dashboard")
+                .map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.title}
+                      isActive={pathname.startsWith(item.url)}
+                    >
+                      <Link href={item.url} className="flex items-center gap-2">
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
