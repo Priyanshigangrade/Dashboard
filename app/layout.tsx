@@ -1,37 +1,22 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-
 import ThemeProvider from "@/components/providers/ThemeProvider"
-import AppSidebar from "@/components/app-sidebar"
-import Navbar from "@/components/Navbar"
-
-import { SidebarProvider } from "@/components/ui/sidebar"
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] })
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Dashboard",
-  description: "Dashboard App",
+  description: "AI Content Creator Dashboard",
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SidebarProvider>
-            <div className="flex min-h-screen w-full">
-              <AppSidebar />
-              <div className="flex w-full flex-col">
-                <Navbar />
-                <main className="flex-1 px-4 py-4">{children}</main>
-              </div>
-            </div>
-          </SidebarProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

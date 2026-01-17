@@ -1,12 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { Badge } from "lucide-react"
+import { redirect } from "next/navigation"
 
-const HomePage = () => {
-  return (
-    <div className="h-screen flex items-center justify-center">
-    
-    </div>
-  )
+export default function Home() {
+  redirect("/login")
 }
-
-export default HomePage 
