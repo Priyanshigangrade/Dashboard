@@ -17,31 +17,40 @@ export const mockTemplates: Template[] = [
     category: "Product Marketing",
     updatedAt: "2026-01-17",
     aspectRatio: "16:9",
-    thumbnailUrl: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?q=80&w=1200&auto=format&fit=crop",
+
+    // ✅ changed from meat image to your local image
+    thumbnailUrl:
+  "https://images.unsplash.com/photo-1556910096-6f5e72db6803?q=80&w=1200&auto=format&fit=crop",
+
+
     shots: [
       {
         id: "s1",
         title: "Ingredients aesthetic wide shot",
         shotType: "Wide",
-        instruction: "Cinematic wide shot of kitchen ingredients...",
+        instruction:
+          "A warm, sunlit Indian home kitchen in the morning. Wide cinematic frame of a white marble kitchen counter naturally styled with everyday Indian cooking ingredients (turmeric, red chilli powder, coriander seeds, dried red chillies, green chillies, soaked lentils, coconut halves, coriander leaves, curry leaves, garlic). No people. No text. Photorealistic. 4K. Premium advertising style.",
         aspectRatio: "16:9",
       },
       {
         id: "s2",
         title: "Product hero reveal",
         shotType: "Close-up",
-        instruction: "Reveal mixer grinder naturally on countertop...",
+        instruction:
+          "Reveal Crompton DuroGrand mixer grinder placed naturally at the center of the kitchen counter, surrounded by ingredients. Soft morning sunlight highlights steel jar. Shallow depth of field. Premium appliance commercial photography. No branding overlays.",
         aspectRatio: "16:9",
       },
       {
         id: "s3",
         title: "Top-down jar close",
         shotType: "Top-down",
-        instruction: "Top-down inside jar showing blades and ingredients...",
+        instruction:
+          "Top-down close-up inside the blender jar showing raw ingredients arranged around blades. High detail, ultra realistic lighting, soft contrast. 4K. No text.",
         aspectRatio: "16:9",
       },
     ],
   },
+
   {
     id: "tpl-002",
     name: "Real Estate – Walkthrough Storyboard",
@@ -49,13 +58,18 @@ export const mockTemplates: Template[] = [
     category: "Real Estate",
     updatedAt: "2026-01-16",
     aspectRatio: "9:16",
-    thumbnailUrl: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1200&auto=format&fit=crop",
+
+    // ✅ kept Unsplash house image (works fine)
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1200&auto=format&fit=crop",
+
     shots: [
       {
         id: "s1",
         title: "Exterior golden hour",
         shotType: "Wide",
-        instruction: "Exterior wide shot in warm evening light...",
+        instruction:
+          "Real estate exterior wide shot in warm golden hour light, cinematic framing, premium marketing style, no people, clean composition, 4K.",
         aspectRatio: "9:16",
       },
     ],

@@ -41,13 +41,16 @@ export function TemplateCard({ template }: { template: Template }) {
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
                 <Link href={`/dashboard/templates/builder/${template.id}`}>
                   Edit
                 </Link>
               </DropdownMenuItem>
+
               <DropdownMenuItem>Duplicate</DropdownMenuItem>
+
               <DropdownMenuItem className="text-red-600">
                 Delete
               </DropdownMenuItem>
@@ -71,6 +74,7 @@ export function TemplateCard({ template }: { template: Template }) {
 
       <CardFooter className="flex gap-2 p-4 pt-0">
         <Button className="flex-1">Use Template</Button>
+
         <Button variant="secondary" className="flex-1" asChild>
           <Link href={`/dashboard/templates/builder/${template.id}`}>Preview</Link>
         </Button>
@@ -79,16 +83,14 @@ export function TemplateCard({ template }: { template: Template }) {
   )
 }
 
-export function NewTemplateCard() {
+export function NewTemplateCard({ onClick }: { onClick: () => void }) {
   return (
     <Card className="flex min-h-[320px] items-center justify-center rounded-2xl border-dashed">
-      <Button asChild variant="outline" className="h-auto py-10">
-        <Link href="/dashboard/templates/builder/new">
-          <div className="flex flex-col items-center gap-2">
-            <div className="text-4xl font-semibold">+</div>
-            <div className="font-medium">New Template</div>
-          </div>
-        </Link>
+      <Button variant="outline" className="h-auto py-10" onClick={onClick}>
+        <div className="flex flex-col items-center gap-2">
+          <div className="text-4xl font-semibold">+</div>
+          <div className="font-medium">New Template</div>
+        </div>
       </Button>
     </Card>
   )

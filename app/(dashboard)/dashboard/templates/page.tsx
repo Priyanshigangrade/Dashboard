@@ -25,6 +25,10 @@ export default function TemplatesPage() {
     return matchesSearch && matchesCategory
   })
 
+  const goToNewTemplate = () => {
+    router.push("/dashboard/templates/builder/new")
+  }
+
   return (
     <div className="space-y-6">
       <TemplatesToolbar
@@ -34,11 +38,11 @@ export default function TemplatesPage() {
         onCategoryChange={setCategory}
         view={view}
         onViewChange={setView}
-        onNewTemplate={() => router.push("/dashboard/templates/builder/new")}
+        onNewTemplate={goToNewTemplate}
       />
 
       {view === "grid" ? (
-        <TemplatesGrid templates={filtered} />
+        <TemplatesGrid templates={filtered} onNewTemplate={goToNewTemplate} />
       ) : (
         <TemplatesTable templates={filtered} />
       )}

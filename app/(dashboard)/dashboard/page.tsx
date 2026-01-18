@@ -1,7 +1,7 @@
 export default function DashboardPage() {
   return (
-    <div className="text-xl font-semibold">
-      
+    <div className="p-6 text-xl font-semibold">
+     
     </div>
   )
 }

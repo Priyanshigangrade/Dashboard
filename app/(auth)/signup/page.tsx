@@ -16,56 +16,48 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter()
   const [loading, setLoading] = React.useState(false)
 
- function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-  e.preventDefault()
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setLoading(true)
 
-  document.cookie = "token=demo-token; path=/; max-age=86400"
-  window.location.href = "/dashboard"
-}
+    // ✅ Temporary redirect to dashboard (no backend yet)
+    router.push("/dashboard")
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Create an account</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your details below to create your account
           </CardDescription>
         </CardHeader>
 
         <CardContent className="grid gap-4">
-          {/* ✅ Email + Password ABOVE */}
+          {/* ✅ Name + Email + Password ABOVE */}
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" type="text" placeholder="Priyanshi Gangrade" required />
             </div>
 
             <div className="grid gap-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                  href="#"
-                  className="text-sm text-muted-foreground underline-offset-4 hover:underline"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="m@example.com" required />
+            </div>
 
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" required />
             </div>
 
             <Button className="w-full" type="submit" disabled={loading}>
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Creating..." : "Create account"}
             </Button>
           </form>
 
@@ -81,12 +73,12 @@ export default function LoginPage() {
           </Button>
 
           <div className="text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            Already have an account?{" "}
             <Link
-              href="/signup"
+              href="/login"
               className="underline underline-offset-4 hover:text-primary"
             >
-              Sign up
+              Login
             </Link>
           </div>
         </CardContent>
