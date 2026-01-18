@@ -28,7 +28,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
 
@@ -140,7 +139,7 @@ export default function AppSidebar() {
       <SidebarHeader>
         <div className="flex items-center justify-between px-2">
           <SidebarTopBrand />
-          <SidebarTrigger />
+          {/* ✅ SidebarTrigger removed */}
         </div>
       </SidebarHeader>
 
@@ -165,7 +164,7 @@ export default function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              {/* ✅ API Keys Dropdown (Click row opens dropdown) */}
+              {/* ✅ API Keys Dropdown */}
               <SidebarMenuItem>
                 <Collapsible open={apiOpen} onOpenChange={setApiOpen}>
                   <CollapsibleTrigger asChild>
