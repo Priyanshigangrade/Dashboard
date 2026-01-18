@@ -28,6 +28,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
 
@@ -37,8 +38,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 import {
   Collapsible,
@@ -53,24 +52,6 @@ const items = [
   { title: "Projects", url: "/dashboard/projects", icon: FolderKanban },
   { title: "Users", url: "/dashboard/users", icon: Users },
 ]
-
-/* ✅ TOP BRAND */
-function SidebarTopBrand() {
-  const { state } = useSidebar()
-
-  return (
-    <div className="flex items-center gap-3 px-2">
-      <Avatar className="h-8 w-8">
-        <AvatarImage src="https://github.com/shadcn.png" />
-        <AvatarFallback>P</AvatarFallback>
-      </Avatar>
-
-      {state !== "collapsed" && (
-        <span className="text-sm font-semibold">Priyanshi</span>
-      )}
-    </div>
-  )
-}
 
 /* ✅ BOTTOM USER DROPDOWN */
 function SidebarUserMenu() {
@@ -135,11 +116,10 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      {/* HEADER */}
+      {/* ✅ HEADER (ONLY TRIGGER) */}
       <SidebarHeader>
-        <div className="flex items-center justify-between px-2">
-          <SidebarTopBrand />
-          {/* ✅ SidebarTrigger removed */}
+        <div className="flex items-center justify-end px-2 py-2">
+          <SidebarTrigger />
         </div>
       </SidebarHeader>
 
