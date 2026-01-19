@@ -37,6 +37,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 
 import {
@@ -45,7 +46,9 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 
-/* ✅ OTHER MENU ITEMS (API Keys handled separately as dropdown) */
+import { Button } from "@/components/ui/button"
+
+/* NAV ITEMS */
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Templates", url: "/dashboard/templates", icon: FileText },
@@ -53,43 +56,48 @@ const items = [
   { title: "Users", url: "/dashboard/users", icon: Users },
 ]
 
-/* ✅ BOTTOM USER DROPDOWN */
+/* USER MENU */
 function SidebarUserMenu() {
   const { state } = useSidebar()
   const router = useRouter()
 
+  function handleLogout() {
+    localStorage.removeItem("aiccr-auth")
+    router.replace("/login")
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-left hover:bg-sidebar-accent">
-          <User className="h-4 w-4" />
-
+        <Button variant="ghost" className="w-full justify-between px-2 py-6">
+          <div className="flex items-center gap-2">
+            <User className="h-4 w-4" />
+            {state !== "collapsed" && (
+              <span className="text-sm font-medium">Priyanshi</span>
+            )}
+          </div>
           {state !== "collapsed" && (
-            <>
-              <span className="flex-1 text-sm font-medium">Priyanshi</span>
-              <ChevronsUpDown className="h-4 w-4 opacity-70" />
-            </>
+            <ChevronsUpDown className="h-4 w-4 opacity-60" />
           )}
-        </button>
+        </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent side="top" align="start" className="w-44">
-        <DropdownMenuItem>
+      <DropdownMenuContent side="top" align="start" className="w-48">
+        <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
           <User className="mr-2 h-4 w-4" />
           Account
         </DropdownMenuItem>
 
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push("/dashboard/settings")}>
           <Settings className="mr-2 h-4 w-4" />
           Settings
         </DropdownMenuItem>
 
+        <DropdownMenuSeparator />
+
         <DropdownMenuItem
-          className="text-red-600"
-          onClick={() => {
-            localStorage.removeItem("isLoggedIn")
-            router.push("/login")
-          }}
+          onClick={handleLogout}
+          className="text-red-600 focus:text-red-600"
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
@@ -99,38 +107,44 @@ function SidebarUserMenu() {
   )
 }
 
-/* ✅ MAIN SIDEBAR */
+/* MAIN SIDEBAR */
 export default function AppSidebar() {
   const pathname = usePathname()
 
-  // ✅ auto open dropdown when inside api-keys routes
-  const apiOpenDefault = pathname.startsWith("/dashboard/api-keys")
+  // ✅ ALL HOOKS FIRST (NO CONDITIONALS ABOVE)
+  const [mounted, setMounted] = React.useState(false)
 
-  // ✅ STATE REQUIRED for dropdown open/close
+  const apiOpenDefault = pathname.startsWith("/dashboard/api-keys")
   const [apiOpen, setApiOpen] = React.useState(apiOpenDefault)
 
-  // ✅ keep dropdown open when route changes to api keys
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
   React.useEffect(() => {
     if (apiOpenDefault) setApiOpen(true)
   }, [apiOpenDefault])
 
+  // ✅ CONDITIONAL RENDER AFTER HOOKS
+  if (!mounted) return null
+
   return (
     <Sidebar collapsible="icon">
-      {/* ✅ HEADER (ONLY TRIGGER) */}
+      {/* HEADER */}
       <SidebarHeader>
         <div className="flex items-center justify-end px-2 py-2">
           <SidebarTrigger />
         </div>
       </SidebarHeader>
 
-      {/* MENU */}
+      {/* CONTENT */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {/* ✅ Dashboard */}
+              {/* Dashboard */}
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
@@ -144,14 +158,13 @@ export default function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              {/* ✅ API Keys Dropdown */}
+              {/* API Keys */}
               <SidebarMenuItem>
                 <Collapsible open={apiOpen} onOpenChange={setApiOpen}>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       tooltip="API Keys"
                       isActive={apiOpenDefault}
-                      onClick={() => setApiOpen((prev) => !prev)}
                     >
                       <KeyRound className="h-4 w-4" />
                       <span>API Keys</span>
@@ -179,9 +192,9 @@ export default function AppSidebar() {
                 </Collapsible>
               </SidebarMenuItem>
 
-              {/* ✅ Other menu items */}
+              {/* Other Items */}
               {items
-                .filter((x) => x.title !== "Dashboard")
+                .filter((i) => i.title !== "Dashboard")
                 .map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
@@ -202,7 +215,7 @@ export default function AppSidebar() {
       </SidebarContent>
 
       {/* FOOTER */}
-      <SidebarFooter>
+      <SidebarFooter className="border-t p-2">
         <SidebarUserMenu />
       </SidebarFooter>
     </Sidebar>
