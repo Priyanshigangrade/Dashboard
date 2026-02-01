@@ -1,0 +1,61 @@
+"use client"
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
+
+export default function ApiKeysPage() {
+  return (
+    <div className="flex justify-center px-6 py-10">
+      <div className="w-full max-w-2xl space-y-6">
+        {/* PAGE TITLE */}
+        <h1 className="text-3xl font-semibold text-center">
+          API Keys
+        </h1>
+
+        <Tabs defaultValue="gemini">
+          <TabsContent value="gemini">
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle>Gemini Configuration</CardTitle>
+              </CardHeader>
+
+              <CardContent className="space-y-6">
+                {/* API USER NAME */}
+                <div className="space-y-2">
+                  <Label htmlFor="gemini-name">API User Name</Label>
+                  <Input
+                    id="gemini-name"
+                    placeholder="e.g. Gemini Prod Key"
+                  />
+                </div>
+
+                {/* GEMINI API KEY */}
+                <div className="space-y-2">
+                  <Label htmlFor="gemini-key">Gemini API Key</Label>
+                  <Input
+                    id="gemini-key"
+                    type="password"
+                    placeholder="AIza..."
+                  />
+                </div>
+
+                {/* ACTION */}
+                <div className="pt-2">
+                  <Button>Save Gemini Key</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  )
+}
