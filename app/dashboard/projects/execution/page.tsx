@@ -65,6 +65,10 @@ const mockVideos: Video[] = [
       videoPrompts: [],
       generatedVideos: [],
     },
+    stage5: {
+      editedVideos: [],
+      finalVideo: null,
+    },
     created: new Date().toISOString(),
     modified: new Date().toISOString(),
   },
@@ -91,6 +95,10 @@ const mockVideos: Video[] = [
       videoPrompts: [],
       generatedVideos: [],
     },
+    stage5: {
+      editedVideos: [],
+      finalVideo: null,
+    },
     created: new Date().toISOString(),
     modified: new Date().toISOString(),
   },
@@ -116,6 +124,10 @@ const mockVideos: Video[] = [
     stage4: {
       videoPrompts: [],
       generatedVideos: [],
+    },
+    stage5: {
+      editedVideos: [],
+      finalVideo: null,
     },
     created: new Date().toISOString(),
     modified: new Date().toISOString(),

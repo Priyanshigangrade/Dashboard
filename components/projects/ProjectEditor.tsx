@@ -22,6 +22,7 @@ export default function ProjectEditor({ initialProject, onSave, onClose }: { ini
     stage2: { shots: [], comments: [] },
     stage3: { generatedImages: [] },
     stage4: { videoPrompts: [], generatedVideos: [] },
+    stage5: { editedVideos: [], finalVideo: null },
     created: new Date().toISOString(),
     modified: new Date().toISOString(),
   })
@@ -91,6 +92,7 @@ export default function ProjectEditor({ initialProject, onSave, onClose }: { ini
                   stage2: { shots: [], comments: [] },
                   stage3: { generatedImages: [] },
                   stage4: { videoPrompts: [], generatedVideos: [] },
+                  stage5: { editedVideos: [], finalVideo: null },
                   created: new Date().toISOString(),
                   modified: new Date().toISOString(),
                 }
@@ -133,7 +135,7 @@ export default function ProjectEditor({ initialProject, onSave, onClose }: { ini
             {stage === 1 && <Stage1 video={project.videos[0]} onChange={(patch:any)=>{ setProject(p=>({ ...p, videos: p.videos.map((vv,i)=> i===0?{...vv,...patch}:vv) })) }} onGenerateShots={()=>setStage(2)} />}
             {stage === 2 && <Stage2 video={project.videos[0]} onChange={(patch:any)=>{ setProject(p=>({ ...p, videos: p.videos.map((vv,i)=> i===0?{...vv,...patch}:vv) })) }} onGenerateImages={()=>setStage(3)} />}
             {stage === 3 && <Stage3 video={project.videos[0]} onChange={(patch:any)=>{ setProject(p=>({ ...p, videos: p.videos.map((vv,i)=> i===0?{...vv,...patch}:vv) })) }} onGenerateImages={()=>{}} />}
-            {stage === 4 && <Stage4 video={project.videos[0]} onChange={(patch:any)=>{ setProject(p=>({ ...p, videos: p.videos.map((vv,i)=> i===0?{...vv,...patch}:vv) })) }} onGenerateVideoPrompts={()=>{}} onGenerateVideos={()=>{}} />}
+            {stage === 4 && <Stage4 video={project.videos[0]} onChange={(patch:any)=>{ setProject(p=>({ ...p, videos: p.videos.map((vv,i)=> i===0?{...vv,...patch}:vv) })) }} onGenerateImages={()=>setStage(5)} />}
           </div>
         </div>
       </div>

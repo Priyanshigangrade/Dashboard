@@ -105,8 +105,7 @@ export default function Stage3({ video, onChange, onGenerateImages }: Props) {
         if (index !== -1) {
           updatedImages[index] = {
             ...updatedImages[index],
-            url: `https://source.unsplash.com/random/800x600?sig=${shotNumber}-${Date.now()}`,
-            createdAt: new Date().toISOString()
+            url: `https://source.unsplash.com/random/800x600?sig=${shotNumber}-${Date.now()}`
           };
         }
       });

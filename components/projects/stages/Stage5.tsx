@@ -74,7 +74,8 @@ export default function Stage5({ video, onChange, onFinalizeVideo }: Props) {
                           url: `https://video.example.com/${video.id}-final-${Date.now()}.mp4`,
                           generatedAt: new Date().toISOString(),
                           quality: "1080p",
-                          duration: generatedVideos.length * 3
+                          duration: generatedVideos.length * 3,
+                          shotsIncluded: generatedVideos.map((_, i) => i)
                         }
                       }
                     });

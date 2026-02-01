@@ -12,7 +12,7 @@ export default function NewProjectPage() {
     name: "",
     description: "",
     type: "Product Marketing",
-    active: true,
+    status: "active",
     videos: [],
     created: new Date().toISOString(),
     modified: new Date().toISOString(),

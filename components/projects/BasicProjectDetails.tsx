@@ -46,6 +46,7 @@ export default function BasicProjectDetails({
       stage2: { shots: [], comments: [] },
       stage3: { generatedImages: [] },
       stage4: { videoPrompts: [], generatedVideos: [] },
+      stage5: { editedVideos: [], finalVideo: null },
       created: new Date().toISOString(),
       modified: new Date().toISOString(),
     }
@@ -174,8 +175,7 @@ export default function BasicProjectDetails({
                 <Stage4
                   video={project.videos[selectedVideoIdx]}
                   onChange={handleVideoChange}
-                  onGenerateVideoPrompts={() => {}}
-                  onGenerateVideos={() => {}}
+                  onGenerateImages={() => {}}
                 />
               </div>
             )}

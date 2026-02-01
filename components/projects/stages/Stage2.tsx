@@ -67,7 +67,7 @@ export default function Stage2({ video, onChange, onGenerateImages }: Props) {
   function manualUploadShot(index: number, file: File) {
     const url = URL.createObjectURL(file)
     const next = shots.map((s, i) =>
-      i === index ? { ...s, status: "uploaded", generatedImageUrl: url } : s
+      i === index ? { ...s, status: "uploaded" as const, generatedImageUrl: url } : s
     )
     onChange({ ...video, stage2: { ...video.stage2, shots: next } })
   }
