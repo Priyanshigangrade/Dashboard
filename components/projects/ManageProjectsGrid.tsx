@@ -767,13 +767,13 @@ export default function ManageProjectsGrid() {
                         </div>
                         <div>
                           <p className="font-medium text-muted-foreground">Sound Effects</p>
-                          {selectedProject.config.audio.sound_effects.map((sfx, idx) => (
+                          {selectedProject.config.audio.sound_effects.map((sfx: any, idx: number) => (
                             <div key={idx} className="mt-1">
                               <Badge variant="secondary" className="text-xs">
                                 {sfx.type}
                               </Badge>
                               <p className="text-muted-foreground text-xs mt-1">
-                                {sfx.elements.join(', ')}
+                                {sfx.elements?.join(', ')}
                               </p>
                             </div>
                           ))}

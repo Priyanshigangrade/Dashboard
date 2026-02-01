@@ -57,6 +57,80 @@ export type Video = {
   modified: string
 }
 
+export type ProjectConfig = {
+  video: {
+    aspect_ratio: string
+    duration_sec: number
+    resolution: string
+    style: string
+  }
+  source_image: {
+    path: string
+    type: string
+  }
+  shot: {
+    shot_name: string
+    shot_type: string
+    camera: {
+      start_framing: {
+        description: string
+        focal_length: string
+        depth_of_field: string
+      }
+      movement: {
+        type: string
+        duration_sec: number
+        easing: string
+        end_framing: {
+          description: string
+          focal_length: string
+          depth_of_field: string
+        }
+      }
+      stabilization: string
+    }
+    lighting: {
+      base_light: string
+      animation: {
+        type: string
+        direction: string
+        intensity_change: string
+        purpose: string
+      }
+    }
+    environment?: {
+      kitchen_style?: string
+      style?: string
+      background?: Record<string, any>
+    }
+  }
+  audio: {
+    music: {
+      track_type: string
+      mood: string
+      fade_in_sec?: number
+      volume?: string
+    }
+    sound_effects: Array<{
+      type: string
+      elements?: string[]
+      volume?: string
+    }>
+  }
+  color_grading: {
+    tone: string
+    contrast: string
+    saturation: string
+    highlights?: string
+  }
+  restrictions: {
+    no_people: boolean
+    no_text: boolean
+    no_graphics: boolean
+    no_brand_overlays: boolean
+  }
+}
+
 export type Project = {
   id: string
   name: string
@@ -66,6 +140,7 @@ export type Project = {
   videos: Video[]
   created: string
   modified: string
+  config?: ProjectConfig
 }
 
 export type ProjectTypeConfig = {
