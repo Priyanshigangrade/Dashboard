@@ -27,7 +27,7 @@ export default function Step4VideoParams({
           onChange={(params) =>
             onChange?.({ ...data, videoParameters: params })
           }
-          isEditing={true}
+          allowedTypes={['text', 'number', 'file']}
         />
       </Card>
     </div>

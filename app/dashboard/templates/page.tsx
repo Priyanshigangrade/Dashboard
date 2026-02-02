@@ -56,7 +56,6 @@ export default function TemplatesPage() {
           } overflow-y-auto px-6 py-6`}
         >
           <TemplateGrid
-            viewMode="grid"
             searchQuery={searchQuery}
             category="all"
             onTemplateSelect={setSelectedTemplateId}

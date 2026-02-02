@@ -61,6 +61,11 @@ export default function ProjectExecutionWorkflow({
     setVideo(updatedVideo)
   }
 
+  const handleStageChange = (patch: Partial<Video>) => {
+    const updated = { ...video, ...patch, modified: new Date().toISOString() }
+    setVideo(updated)
+  }
+
   const handleMetadataUpdate = (key: keyof Video, value: any) => {
     const updated = { ...video, [key]: value, modified: new Date().toISOString() }
     setVideo(updated)
@@ -248,9 +253,8 @@ export default function ProjectExecutionWorkflow({
           <div className="h-full">
             <Stage1
               video={video}
-              onChange={handleVideoUpdate}
+              onChange={handleStageChange}
               onGenerateShots={() => setCurrentStage(2)}
-              onModifyStoryboard={() => setCurrentStage(2)}
             />
           </div>
         )}
@@ -260,9 +264,8 @@ export default function ProjectExecutionWorkflow({
           <div className="h-full">
             <Stage2
               video={video}
-              onChange={handleVideoUpdate}
+              onChange={handleStageChange}
               onGenerateImages={() => setCurrentStage(3)}
-              onBackToScript={() => setCurrentStage(1)}
             />
           </div>
         )}
@@ -272,9 +275,8 @@ export default function ProjectExecutionWorkflow({
           <div className="h-full">
             <Stage3
               video={video}
-              onChange={handleVideoUpdate}
-              onGenerateVideos={() => setCurrentStage(4)}
-              onBackToStoryboard={() => setCurrentStage(2)}
+              onChange={handleStageChange}
+              onGenerateImages={() => setCurrentStage(4)}
             />
           </div>
         )}

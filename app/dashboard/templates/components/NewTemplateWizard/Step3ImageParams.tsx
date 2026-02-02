@@ -27,7 +27,7 @@ export default function Step3ImageParams({
           onChange={(params) =>
             onChange?.({ ...data, imageParameters: params })
           }
-          isEditing={true}
+          allowedTypes={['text', 'number', 'file']}
         />
       </Card>
     </div>
