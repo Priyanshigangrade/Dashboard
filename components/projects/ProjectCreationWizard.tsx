@@ -11,6 +11,8 @@ import Stage1 from "./stages/Stage1"
 import Stage2 from "./stages/Stage2"
 import Stage3 from "./stages/Stage3"
 import Stage4 from "./stages/Stage4"
+import Stage5 from "./stages/Stage5"
+
 
 interface BasicProjectDetailsProps {
   project: Project
@@ -179,6 +181,7 @@ export default function BasicProjectDetails({
                 />
               </div>
             )}
+            
           </div>
         </div>
       </div>

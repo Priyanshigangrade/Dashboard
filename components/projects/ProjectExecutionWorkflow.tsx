@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,9 +16,13 @@ import {
   Play, Download, Trash2, Eye, Settings, Grid3x3, 
   Image as ImageIcon, Video as VideoIcon, ZoomIn, 
   Edit, Film, CheckCircle, Upload, Layers, Scissors,
-  Sparkles, Settings2, Globe, Volume2
+  Sparkles, Settings2, Globe, Volume2, ArrowLeft
 } from "lucide-react"
 import { Video, Shot } from "./types"
+import Stage1 from "./stages/Stage1"
+import Stage2 from "./stages/Stage2"
+import Stage3 from "./stages/Stage3"
+import Stage4 from "./stages/Stage4"
 
 interface ProjectExecutionWorkflowProps {
   video: Video
@@ -38,7 +41,7 @@ export default function ProjectExecutionWorkflow({
   )
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
-  const [activeStage, setActiveStage] = useState<'shots' | 'storyboard' | 'video' | 'edit' | 'settings'>('shots')
+  const [currentStage, setCurrentStage] = useState<1 | 2 | 3 | 4 | 5>(1)
   const [exportQuality, setExportQuality] = useState('1080p')
   const [editingVideo, setEditingVideo] = useState<{shotNumber: number, url: string} | null>(null)
 
@@ -52,6 +55,10 @@ export default function ProjectExecutionWorkflow({
     }
     setVideo(updated)
     setSelectedShot(shot)
+  }
+
+  const handleVideoUpdate = (updatedVideo: Video) => {
+    setVideo(updatedVideo)
   }
 
   const handleMetadataUpdate = (key: keyof Video, value: any) => {
@@ -95,7 +102,7 @@ export default function ProjectExecutionWorkflow({
     const generatedVideo = video.stage4.generatedVideos.find(v => v.shotNumber === shotNumber)
     if (generatedVideo) {
       setEditingVideo(generatedVideo)
-      setActiveStage('edit')
+      setCurrentStage(4) // Edit stage
     }
   }
 
@@ -165,6 +172,30 @@ export default function ProjectExecutionWorkflow({
     onSave?.(video)
   }
 
+  // Stage-specific navigation
+  const renderStageNavigation = () => {
+    return (
+      <div className="flex items-center gap-2 mb-4">
+        {currentStage > 1 && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentStage((currentStage - 1) as any)}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Stage {currentStage - 1}
+          </Button>
+        )}
+        <div className="flex-1 text-center">
+          <Badge variant="outline" className="text-lg px-4 py-1">
+            Stage {currentStage}
+          </Badge>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 to-white">
       {/* Header with Progress */}
@@ -208,321 +239,49 @@ export default function ProjectExecutionWorkflow({
         </div>
       </div>
 
-      {/* Stage Navigation */}
-      <div className="border-b bg-white">
-        <Tabs 
-          value={activeStage} 
-          onValueChange={(v) => setActiveStage(v as any)}
-          className="w-full"
-        >
-          <TabsList className="w-full justify-start rounded-none bg-transparent px-6 gap-1">
-            <TabsTrigger value="shots" className="gap-2 data-[state=active]:bg-blue-50">
-              <VideoIcon className="h-4 w-4" />
-              Shots ({video.stage2.shots.length})
-            </TabsTrigger>
-            <TabsTrigger value="storyboard" className="gap-2 data-[state=active]:bg-blue-50">
-              <Grid3x3 className="h-4 w-4" />
-              Storyboard ({video.stage3.generatedImages.length})
-            </TabsTrigger>
-            <TabsTrigger value="video" className="gap-2 data-[state=active]:bg-blue-50">
-              <Film className="h-4 w-4" />
-              Videos ({video.stage4.generatedVideos.length})
-            </TabsTrigger>
-            <TabsTrigger value="edit" className="gap-2 data-[state=active]:bg-blue-50">
-              <Scissors className="h-4 w-4" />
-              Edit ({video.stage5.editedVideos.length})
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="gap-2 data-[state=active]:bg-blue-50">
-              <Settings2 className="h-4 w-4" />
-              Settings
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div>
-
       {/* Content Area */}
-      <div className="flex-1 overflow-hidden">
-        {/* Shots Tab */}
-        {activeStage === 'shots' && (
-          <div className="flex h-full gap-4 p-6">
-            {/* Left: Shot List */}
-            <div className="w-64 border rounded-lg overflow-hidden flex flex-col bg-white shadow-sm">
-              <div className="border-b px-4 py-3 bg-slate-50">
-                <h3 className="font-semibold text-sm text-slate-800">Shots ({video.stage2.shots.length})</h3>
-              </div>
-              <ScrollArea className="flex-1">
-                <div className="space-y-2 p-4">
-                  {video.stage2.shots.map((shot) => (
-                    <div
-                      key={shot.number}
-                      onClick={() => setSelectedShot(shot)}
-                      className={`p-3 border rounded-lg cursor-pointer transition-all duration-200 ${
-                        selectedShot?.number === shot.number
-                          ? "bg-blue-50 border-blue-300 shadow-sm"
-                          : "hover:bg-slate-50 border-slate-200"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-medium text-sm text-slate-800">Shot {shot.number}</span>
-                        <Badge
-                          variant={
-                            shot.status === "generated" ? "default" : "outline"
-                          }
-                          className="text-xs"
-                        >
-                          {shot.status}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-slate-600 mt-1 line-clamp-2">
-                        {shot.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-
-            {/* Center: Shot Editor */}
-            <div className="flex-1 border rounded-lg overflow-hidden flex flex-col bg-white shadow-sm">
-              <div className="border-b px-4 py-3 bg-slate-50">
-                <h3 className="font-semibold text-sm text-slate-800">
-                  {selectedShot ? `Shot ${selectedShot.number} Editor` : 'Select a Shot'}
-                </h3>
-              </div>
-              <ScrollArea className="flex-1">
-                {selectedShot ? (
-                  <div className="space-y-4 p-4">
-                    <div>
-                      <Label className="text-sm text-slate-700">Description</Label>
-                      <Textarea
-                        value={selectedShot.description}
-                        onChange={(e) =>
-                          handleShotUpdate({
-                            ...selectedShot,
-                            description: e.target.value,
-                          })
-                        }
-                        className="mt-1 resize-none"
-                        rows={3}
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-sm text-slate-700">Image Prompt</Label>
-                      <Textarea
-                        value={selectedShot.imagePrompt}
-                        onChange={(e) =>
-                          handleShotUpdate({
-                            ...selectedShot,
-                            imagePrompt: e.target.value,
-                          })
-                        }
-                        className="mt-1 resize-none"
-                        rows={3}
-                        placeholder="Describe the image you want to generate..."
-                      />
-                    </div>
-                    <Button
-                      size="sm"
-                      className="w-full bg-blue-600 hover:bg-blue-700"
-                      onClick={() => handleGenerateShot(selectedShot.number)}
-                      disabled={!selectedShot.imagePrompt}
-                    >
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Generate AI Image
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-slate-500 p-8">
-                    <VideoIcon className="h-12 w-12 mb-3 text-slate-300" />
-                    <p className="text-sm">Select a shot to edit</p>
-                  </div>
-                )}
-              </ScrollArea>
-            </div>
-
-            {/* Right: Output Table */}
-            <div className="w-72 border rounded-lg overflow-hidden flex flex-col bg-white shadow-sm">
-              <div className="border-b px-4 py-3 bg-slate-50">
-                <h3 className="font-semibold text-sm text-slate-800">Generated Images ({video.stage3.generatedImages.length})</h3>
-              </div>
-              <ScrollArea className="flex-1">
-                <div className="space-y-2 p-4">
-                  {video.stage3.generatedImages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-8 text-slate-500">
-                      <ImageIcon className="h-8 w-8 mb-2 text-slate-300" />
-                      <p className="text-xs text-center">No images generated yet</p>
-                    </div>
-                  ) : (
-                    video.stage3.generatedImages.map((img) => (
-                      <div key={img.shotNumber} className="border rounded-lg overflow-hidden hover:shadow-sm transition-shadow">
-                        <div className="relative aspect-video bg-slate-100 group">
-                          <img
-                            src={img.url}
-                            alt={`Shot ${img.shotNumber}`}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                            <Eye className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </div>
-                        </div>
-                        <div className="px-2 py-2 text-xs font-medium border-t bg-slate-50 flex justify-between items-center">
-                          <span>Shot {img.shotNumber}</span>
-                          <Button 
-                            size="sm" 
-                            variant="ghost" 
-                            className="h-6 w-6 p-0"
-                            onClick={() => window.open(img.url, '_blank')}
-                          >
-                            <Download className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </ScrollArea>
-            </div>
+      <div className="flex-1 overflow-hidden p-6">
+        {renderStageNavigation()}
+        
+        {/* Stage 1: Script/Content */}
+        {currentStage === 1 && (
+          <div className="h-full">
+            <Stage1
+              video={video}
+              onChange={handleVideoUpdate}
+              onGenerateShots={() => setCurrentStage(2)}
+              onModifyStoryboard={() => setCurrentStage(2)}
+            />
           </div>
         )}
 
-        {/* Storyboard Tab */}
-        {activeStage === 'storyboard' && (
-          <div className="h-full p-6 overflow-auto">
-            {video.stage3.generatedImages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-slate-500">
-                <Grid3x3 className="h-16 w-16 mb-4 text-slate-300" />
-                <p className="text-sm mb-2">No images to display</p>
-                <p className="text-xs text-slate-400 text-center max-w-sm">
-                  Generate images in the Shots tab first to create your storyboard
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 auto-rows-max">
-                {video.stage3.generatedImages.map((img) => (
-                  <Dialog key={img.shotNumber}>
-                    <DialogTrigger asChild>
-                      <div className="relative group cursor-pointer">
-                        <div className="aspect-video bg-slate-100 rounded-lg overflow-hidden shadow-sm">
-                          <img
-                            src={img.url}
-                            alt={`Shot ${img.shotNumber}`}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center rounded-lg">
-                          <ZoomIn className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                        <div className="text-xs font-medium text-center mt-2 text-slate-700">
-                          Shot {img.shotNumber}
-                        </div>
-                      </div>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-4xl">
-                      <DialogHeader>
-                        <DialogTitle className="text-slate-800">Shot {img.shotNumber} Preview</DialogTitle>
-                      </DialogHeader>
-                      <img 
-                        src={img.url} 
-                        alt={`Shot ${img.shotNumber}`} 
-                        className="w-full rounded-lg shadow-lg" 
-                      />
-                    </DialogContent>
-                  </Dialog>
-                ))}
-              </div>
-            )}
+        {/* Stage 2: Storyboard */}
+        {currentStage === 2 && (
+          <div className="h-full">
+            <Stage2
+              video={video}
+              onChange={handleVideoUpdate}
+              onGenerateImages={() => setCurrentStage(3)}
+              onBackToScript={() => setCurrentStage(1)}
+            />
           </div>
         )}
 
-        {/* Video Tab */}
-        {activeStage === 'video' && (
-          <div className="h-full overflow-auto p-6">
-            {video.stage4.generatedVideos.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-slate-500">
-                <Film className="h-16 w-16 mb-4 text-slate-300" />
-                <p className="text-sm mb-2">No videos generated yet</p>
-                <p className="text-xs text-slate-400 text-center max-w-sm">
-                  Generate videos from your images to create motion sequences
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {video.stage2.shots.map((shot) => {
-                  const generatedVideo = video.stage4.generatedVideos.find(
-                    (v) => v.shotNumber === shot.number
-                  )
-                  const isEdited = video.stage5.editedVideos.some(v => v.shotNumber === shot.number)
-                  
-                  return (
-                    <Card key={shot.number} className="overflow-hidden">
-                      <CardHeader className="bg-slate-50">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <CardTitle className="text-base text-slate-800">Shot {shot.number}</CardTitle>
-                            <CardDescription className="text-slate-600">{shot.description}</CardDescription>
-                          </div>
-                          <div className="flex gap-2">
-                            <Badge variant={generatedVideo ? "default" : "outline"}>
-                              {generatedVideo ? "Generated" : "Pending"}
-                            </Badge>
-                            {isEdited && <Badge variant="secondary">Edited</Badge>}
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4 pt-4">
-                        {generatedVideo && (
-                          <>
-                            <div className="aspect-video bg-black rounded-lg overflow-hidden">
-                              <video
-                                src={generatedVideo.url}
-                                controls
-                                className="w-full h-full"
-                              />
-                            </div>
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                onClick={() => handleEditVideo(shot.number)}
-                                className="flex-1 bg-blue-600 hover:bg-blue-700"
-                                disabled={!generatedVideo}
-                              >
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit Video
-                              </Button>
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                className="flex-1"
-                                onClick={() => window.open(generatedVideo.url, '_blank')}
-                              >
-                                <Download className="h-4 w-4 mr-2" />
-                                Download
-                              </Button>
-                            </div>
-                          </>
-                        )}
-                        {!generatedVideo && (
-                          <Button
-                            size="sm"
-                            onClick={() => handleGenerateVideo(shot.number)}
-                            className="w-full bg-blue-600 hover:bg-blue-700"
-                          >
-                            <Sparkles className="h-4 w-4 mr-2" />
-                            Generate Video
-                          </Button>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )
-                })}
-              </div>
-            )}
+        {/* Stage 3: Images */}
+        {currentStage === 3 && (
+          <div className="h-full">
+            <Stage3
+              video={video}
+              onChange={handleVideoUpdate}
+              onGenerateVideos={() => setCurrentStage(4)}
+              onBackToStoryboard={() => setCurrentStage(2)}
+            />
           </div>
         )}
 
-        {/* Edit Tab */}
-        {activeStage === 'edit' && (
-          <div className="h-full overflow-auto p-6">
+        {/* Stage 4: Videos & Editing */}
+        {currentStage === 4 && (
+          <div className="h-full overflow-auto">
             {editingVideo ? (
               <Card className="max-w-4xl mx-auto">
                 <CardHeader>
@@ -620,59 +379,78 @@ export default function ProjectExecutionWorkflow({
                   </div>
                 </CardContent>
               </Card>
-            ) : video.stage5.editedVideos.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-slate-500">
-                <Scissors className="h-16 w-16 mb-4 text-slate-300" />
-                <p className="text-sm mb-2">No videos edited yet</p>
-                <p className="text-xs text-slate-400 text-center max-w-sm">
-                  Go to the Videos tab and click "Edit Video" on any generated video
-                </p>
-              </div>
             ) : (
-              <div className="space-y-6 max-w-4xl mx-auto">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-slate-800">Edited Videos ({video.stage5.editedVideos.length})</CardTitle>
-                    <CardDescription>
-                      Preview and manage your edited video sequences
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {video.stage5.editedVideos.map((editedVideo) => (
-                      <div key={editedVideo.shotNumber} className="flex items-center gap-4 p-4 border rounded-lg">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-medium text-slate-800">Shot {editedVideo.shotNumber}</h4>
-                            <Badge variant="outline" className="text-xs">
-                              Edited
+              <div className="space-y-6">
+                {/* Video generation UI from original component */}
+                {video.stage2.shots.map((shot) => {
+                  const generatedVideo = video.stage4.generatedVideos.find(
+                    (v) => v.shotNumber === shot.number
+                  )
+                  const isEdited = video.stage5.editedVideos.some(v => v.shotNumber === shot.number)
+                  
+                  return (
+                    <Card key={shot.number} className="overflow-hidden">
+                      <CardHeader className="bg-slate-50">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <CardTitle className="text-base text-slate-800">Shot {shot.number}</CardTitle>
+                            <CardDescription className="text-slate-600">{shot.description}</CardDescription>
+                          </div>
+                          <div className="flex gap-2">
+                            <Badge variant={generatedVideo ? "default" : "outline"}>
+                              {generatedVideo ? "Generated" : "Pending"}
                             </Badge>
+                            {isEdited && <Badge variant="secondary">Edited</Badge>}
                           </div>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {editedVideo.edits?.map((edit, idx) => (
-                              <Badge key={idx} variant="secondary" className="text-xs">
-                                {edit}
-                              </Badge>
-                            ))}
-                          </div>
-                          <p className="text-xs text-slate-500 mt-2">
-                            Edited: {new Date(editedVideo.editedAt).toLocaleDateString()}
-                          </p>
                         </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline" onClick={() => setEditingVideo(editedVideo)}>
-                            <Edit className="h-4 w-4 mr-1" />
-                            Edit Again
+                      </CardHeader>
+                      <CardContent className="space-y-4 pt-4">
+                        {generatedVideo && (
+                          <>
+                            <div className="aspect-video bg-black rounded-lg overflow-hidden">
+                              <video
+                                src={generatedVideo.url}
+                                controls
+                                className="w-full h-full"
+                              />
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                onClick={() => handleEditVideo(shot.number)}
+                                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                                disabled={!generatedVideo}
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit Video
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="flex-1"
+                                onClick={() => window.open(generatedVideo.url, '_blank')}
+                              >
+                                <Download className="h-4 w-4 mr-2" />
+                                Download
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                        {!generatedVideo && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleGenerateVideo(shot.number)}
+                            className="w-full bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Sparkles className="h-4 w-4 mr-2" />
+                            Generate Video
                           </Button>
-                          <Button size="sm" variant="outline" onClick={() => window.open(editedVideo.url, '_blank')}>
-                            <Download className="h-4 w-4 mr-1" />
-                            Download
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-                
+                        )}
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+
                 {/* Final Video Generation */}
                 <Card className="border-green-200 bg-green-50">
                   <CardHeader>
@@ -763,9 +541,9 @@ export default function ProjectExecutionWorkflow({
           </div>
         )}
 
-        {/* Settings Tab */}
-        {activeStage === 'settings' && (
-          <div className="h-full overflow-auto p-6">
+        {/* Stage 5: Settings */}
+        {currentStage === 5 && (
+          <div className="h-full overflow-auto">
             <div className="space-y-6 max-w-2xl mx-auto">
               <Card>
                 <CardHeader>

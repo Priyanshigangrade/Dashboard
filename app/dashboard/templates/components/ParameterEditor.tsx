@@ -1,110 +1,74 @@
 "use client";
 
-import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+
+type ParamType = "text" | "number" | "file";
 
 interface Parameter {
-  name: string;
-  type: string;
-  required?: boolean;
-  description?: string;
-  defaultValue?: any;
-}
-
-interface ParameterEditorProps {
-  parameters: Parameter[];
-  onChange: (parameters: Parameter[]) => void;
-  isEditing?: boolean;
+  key: string;
+  type: ParamType;
 }
 
 export default function ParameterEditor({
   parameters,
   onChange,
-  isEditing = false,
-}: ParameterEditorProps) {
-  const handleParameterChange = (
-    index: number,
-    field: string,
-    value: any
-  ) => {
-    const updated = [...parameters];
-    updated[index] = {
-      ...updated[index],
-      [field]: value,
-    };
-    onChange(updated);
-  };
-
-  const removeParameter = (index: number) => {
-    const updated = parameters.filter((_, i) => i !== index);
-    onChange(updated);
-  };
-
-  const addParameter = () => {
-    onChange([
-      ...parameters,
-      { name: "param_" + Date.now(), type: "string" },
-    ]);
-  };
-
-  if (!isEditing) {
-    return (
-      <div className="space-y-2">
-        {parameters.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No parameters</p>
-        ) : (
-          parameters.map((param, i) => (
-            <div key={i} className="flex items-center justify-between p-2 bg-muted/50 rounded">
-              <div>
-                <p className="font-medium text-sm">{param.name}</p>
-                <p className="text-xs text-muted-foreground">{param.type}</p>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    );
-  }
-
+  allowedTypes,
+}: {
+  parameters: Parameter[];
+  onChange: (p: Parameter[]) => void;
+  allowedTypes: ParamType[];
+}) {
   return (
     <div className="space-y-3">
-      {parameters.map((param, i) => (
-        <div key={i} className="flex gap-2 items-end">
-          <div className="flex-1 space-y-1">
-            <label className="text-xs font-medium">Name</label>
-            <Input
-              value={param.name}
-              onChange={(e) => handleParameterChange(i, "name", e.target.value)}
-              className="h-8"
-              placeholder="Parameter name"
-            />
-          </div>
-          <div className="flex-1 space-y-1">
-            <label className="text-xs font-medium">Type</label>
-            <Input
-              value={param.type}
-              onChange={(e) => handleParameterChange(i, "type", e.target.value)}
-              className="h-8"
-              placeholder="Type"
-            />
-          </div>
+      {parameters.map((p, i) => (
+        <div key={i} className="grid grid-cols-4 gap-2 items-center">
+          {/* Key */}
+          <Input
+            value={p.key}
+            placeholder="parameter_key"
+            onChange={(e) => {
+              const next = [...parameters];
+              next[i] = { ...p, key: e.target.value };
+              onChange(next);
+            }}
+          />
+
+          {/* Type */}
+          <select
+            value={p.type}
+            onChange={(e) => {
+              const next = [...parameters];
+              next[i] = { ...p, type: e.target.value as ParamType };
+              onChange(next);
+            }}
+            className="border rounded px-2 py-1"
+          >
+            {allowedTypes.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+
+          {/* Delete */}
           <Button
             variant="ghost"
-            size="sm"
-            onClick={() => removeParameter(i)}
-            className="h-8 w-8 p-0"
+            onClick={() =>
+              onChange(parameters.filter((_, x) => x !== i))
+            }
           >
-            <X className="h-4 w-4" />
+            Delete
           </Button>
         </div>
       ))}
+
+      {/* Add */}
       <Button
         variant="outline"
-        size="sm"
-        onClick={addParameter}
-        className="w-full"
+        onClick={() =>
+          onChange([...parameters, { key: "", type: allowedTypes[0] }])
+        }
       >
         Add Parameter
       </Button>

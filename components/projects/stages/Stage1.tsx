@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from "react"
 import { Video } from "@/components/projects/types"
 import { Label } from "@/components/ui/label"
@@ -59,10 +61,6 @@ export default function Stage1({ video, projectType, onChange, onGenerateShots }
         <h2 className="text-2xl font-bold">Stage 1 - New/Modify Video</h2>
         <p className="text-sm text-muted-foreground mt-1">Define and configure your video specifications</p>
       </div>
-
-      
-
-      
 
       {/* Video Details Card */}
       <Card className="transition-all duration-300 hover:border-primary/50">
@@ -142,11 +140,9 @@ export default function Stage1({ video, projectType, onChange, onGenerateShots }
                 />
                 <span className="text-sm text-muted-foreground whitespace-nowrap">seconds</span>
               </div>
-            
             </div>
           </div>
 
-        
           {/* Content Creation Prompt */}
           <div className="space-y-2 transition-all duration-200 hover:bg-accent/30 p-3 rounded-lg">
             <Label className="text-sm font-medium transition-colors duration-200">
@@ -203,31 +199,31 @@ export default function Stage1({ video, projectType, onChange, onGenerateShots }
               </div>
             </div>
 
-            {/* Upload Product Images */}
+            {/* Upload Reference Images - FIXED */}
             <div className="space-y-2 transition-all duration-200 hover:bg-accent/30 p-3 rounded-lg border">
               <Label className="text-sm font-medium flex items-center gap-2 transition-colors duration-200">
                 <FileImage className="h-4 w-4" />
-                <span>Upload Reference images </span>
+                <span>Upload Reference images</span>
               </Label>
               <div className="mt-2">
                 <input 
                   type="file" 
                   accept="image/*" 
                   multiple 
-                  onChange={(e) => handleFileChange(e, "product")}
+                  onChange={(e) => handleFileChange(e, "ref")}
                   className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-all duration-200"
                 />
-                {video.stage1.productImages.length > 0 && (
+                {video.stage1.referenceImages.length > 0 && (
                   <div className="mt-3">
-                    <p className="text-xs font-medium mb-2">{video.stage1.productImages.length} product image(s) uploaded</p>
+                    <p className="text-xs font-medium mb-2">{video.stage1.referenceImages.length} reference image(s) uploaded</p>
                     <div className="grid grid-cols-2 gap-2">
-                      {video.stage1.productImages.map((u, i) => (
+                      {video.stage1.referenceImages.map((u, i) => (
                         <div key={i} className="relative group transition-all duration-200 hover:scale-105">
-                          <img src={u} alt={`product-${i}`} className="w-full h-16 object-cover rounded border" />
+                          <img src={u} alt={`reference-${i}`} className="w-full h-16 object-cover rounded border" />
                           <button
                             onClick={() => {
-                              const updated = video.stage1.productImages.filter((_, idx) => idx !== i);
-                              onChange({ stage1: { ...video.stage1, productImages: updated } });
+                              const updated = video.stage1.referenceImages.filter((_, idx) => idx !== i);
+                              onChange({ stage1: { ...video.stage1, referenceImages: updated } });
                             }}
                             className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded text-white text-xs transition-all duration-200"
                           >

@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import BasicProjectDetails from "./BasicProjectDetails"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Project } from "./types"
+import ProjectCreationWizard from "./ProjectCreationWizard" // Fixed import name
 
 export default function NewProjectDialog({
   open,
@@ -30,7 +30,7 @@ export default function NewProjectDialog({
   return (
     <Dialog open={open}>
       <DialogContent className="!fixed !inset-0 !top-0 !left-0 !translate-x-0 !translate-y-0 !m-0 !w-screen !h-screen !max-w-none !rounded-none !p-0">
-        <BasicProjectDetails
+        <ProjectCreationWizard
           project={project}
           onProjectChange={setProject}
           onClose={onClose}

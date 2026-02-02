@@ -1,14 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+
 import Step1BasicInfo from "./Step1BasicInfo";
 import Step2ContentPrompt from "./Step2ContentPrompt";
 import Step3ImageParams from "./Step3ImageParams";
@@ -19,14 +15,14 @@ interface NewTemplateWizardProps {
 }
 
 const STEPS = [
-  { number: 1, title: "Basic Info", component: Step1BasicInfo },
-  { number: 2, title: "Content Prompt", component: Step2ContentPrompt },
-  { number: 3, title: "Image Params", component: Step3ImageParams },
-  { number: 4, title: "Video Params", component: Step4VideoParams },
+  { title: "Template Basics", component: Step1BasicInfo },
+  { title: "Content Prompt", component: Step2ContentPrompt },
+  { title: "Image Parameters", component: Step3ImageParams },
+  { title: "Video Parameters", component: Step4VideoParams },
 ];
 
 export default function NewTemplateWizard({ onClose }: NewTemplateWizardProps) {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
     purpose: "",
@@ -37,67 +33,71 @@ export default function NewTemplateWizard({ onClose }: NewTemplateWizardProps) {
     videoParameters: [],
   });
 
-  const CurrentStepComponent = STEPS[currentStep].component;
-  const canGoNext = currentStep < STEPS.length - 1;
-  const canGoPrev = currentStep > 0;
-
-  const handleNext = () => {
-    if (canGoNext) setCurrentStep(currentStep + 1);
-  };
-
-  const handlePrev = () => {
-    if (canGoPrev) setCurrentStep(currentStep - 1);
-  };
-
-  const handleCreate = () => {
-    console.log("Creating template:", formData);
-    onClose();
-  };
+  const StepComponent = STEPS[step].component;
 
   return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Create New Template</DialogTitle>
-          <div className="flex gap-2 mt-4">
-            {STEPS.map((step, index) => (
+    <Dialog open>
+      {/* ❌ DO NOT USE DialogContent */}
+      <div className="fixed inset-0 z-[100] bg-background flex flex-col">
+
+        {/* HEADER */}
+        <div className="sticky top-0 z-50 border-b px-6 py-4 flex justify-between bg-background">
+          <div>
+            <h2 className="text-xl font-semibold">
+              Step {step + 1} — {STEPS[step].title}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Configure reusable project template
+            </p>
+          </div>
+
+          <Button variant="ghost" onClick={onClose}>
+            Close
+          </Button>
+        </div>
+
+        {/* PROGRESS */}
+        <div className="px-6 pt-4">
+          <div className="flex gap-2">
+            {STEPS.map((_, i) => (
               <div
-                key={step.number}
-                className={`flex-1 h-1 rounded-full transition-colors ${
-                  index <= currentStep ? "bg-primary" : "bg-muted"
+                key={i}
+                className={`h-1 flex-1 rounded ${
+                  i <= step ? "bg-primary" : "bg-muted"
                 }`}
               />
             ))}
           </div>
-        </DialogHeader>
-
-        <div className="py-6 min-h-[300px]">
-          <CurrentStepComponent
-            data={formData}
-            onChange={setFormData}
-          />
         </div>
 
-        <div className="flex justify-between pt-6 border-t">
+        {/* CONTENT */}
+        <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="max-w-3xl mx-auto">
+            <StepComponent data={formData} onChange={setFormData} />
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div className="border-t px-6 py-4 flex justify-between bg-background">
           <Button
             variant="outline"
-            onClick={handlePrev}
-            disabled={!canGoPrev}
+            disabled={step === 0}
+            onClick={() => setStep(step - 1)}
           >
             <ChevronLeft className="mr-2 h-4 w-4" />
             Previous
           </Button>
 
-          {currentStep === STEPS.length - 1 ? (
-            <Button onClick={handleCreate}>Create Template</Button>
+          {step === STEPS.length - 1 ? (
+            <Button onClick={onClose}>Create Template</Button>
           ) : (
-            <Button onClick={handleNext}>
+            <Button onClick={() => setStep(step + 1)}>
               Next
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           )}
         </div>
-      </DialogContent>
+      </div>
     </Dialog>
   );
 }

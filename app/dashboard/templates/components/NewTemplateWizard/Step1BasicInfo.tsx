@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -13,53 +13,73 @@ import {
 } from "@/components/ui/select";
 
 interface Step1BasicInfoProps {
-  data?: any;
-  onChange?: (data: any) => void;
+  data: any;
+  onChange: (data: any) => void;
 }
 
 const CATEGORIES = [
-  "Video Marketing",
-  "Social Media",
-  "Educational",
-  "Entertainment",
-  "Tutorial",
-  "Product Demo",
+  "E-commerce",
+  "Property",
+  "Lifestyle",
+  "Technology",
+  "Education",
 ];
 
 export default function Step1BasicInfo({
-  data = {},
+  data,
   onChange,
 }: Step1BasicInfoProps) {
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium block mb-2">
-              Template Name
-            </label>
+    <div className="w-full h-full overflow-y-auto px-8 py-8">
+      {/* Header */}
+      <div className="mb-8 border-b pb-4">
+        <h2 className="text-2xl font-semibold">
+          Step 1 — Template Basics
+        </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Define the identity and purpose of this reusable project template
+        </p>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-3xl">
+        <Card className="p-6 space-y-6">
+          {/* Template Name */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Template Name</label>
             <Input
-              placeholder="Enter template name"
+              placeholder="e.g. Kitchen Appliance Commercial"
               value={data.name || ""}
-              onChange={(e) => onChange?.({ ...data, name: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...data, name: e.target.value })
+              }
             />
           </div>
 
-          <div>
-            <label className="text-sm font-medium block mb-2">Purpose</label>
+          {/* Purpose */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Purpose</label>
             <Textarea
-              placeholder="Describe the purpose of this template"
+              placeholder="Describe what this template is used for"
+              className="min-h-[100px]"
               value={data.purpose || ""}
-              onChange={(e) => onChange?.({ ...data, purpose: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...data, purpose: e.target.value })
+              }
             />
           </div>
 
-          <div>
-            <label className="text-sm font-medium block mb-2">Category</label>
-            <Select value={data.category || ""} onValueChange={(value) => onChange?.({ ...data, category: value })}>
+          {/* Category */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Category</label>
+            <Select
+              value={data.category || ""}
+              onValueChange={(value) =>
+                onChange({ ...data, category: value })
+              }
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
+                <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
                 {CATEGORIES.map((cat) => (
@@ -71,20 +91,28 @@ export default function Step1BasicInfo({
             </Select>
           </div>
 
-          <div>
-            <label className="text-sm font-medium block mb-2">
+          {/* Short Description */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
               Short Description
             </label>
             <Textarea
-              placeholder="A brief description of this template"
+              placeholder="One-line summary shown in template cards"
+              className="min-h-[80px]"
               value={data.shortDescription || ""}
               onChange={(e) =>
-                onChange?.({ ...data, shortDescription: e.target.value })
+                onChange({
+                  ...data,
+                  shortDescription: e.target.value,
+                })
               }
             />
+            <p className="text-xs text-muted-foreground">
+              This appears in the template grid and sidebar preview.
+            </p>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }
